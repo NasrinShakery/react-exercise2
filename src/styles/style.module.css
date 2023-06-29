@@ -44,6 +44,19 @@
     color: #b39ddb;
 }
 
+.not-found-section{
+    width: 50%;
+    margin: 0 auto;
+}
+.not-found{
+    text-align: center;
+    color: darkred;
+    font-size: 2rem;
+}
+.not-found-img{
+    width: 80%;
+}
+
 .slider-img{
     width: 600px;
     height: 400px;
