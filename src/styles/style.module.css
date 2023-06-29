@@ -1,0 +1,54 @@
+:root{
+    --btn-color: #b39ddb;
+    --btn-color-hover: #7831fb;
+}
+.navbar{
+    margin: 1rem 3rem;
+}
+.nav{
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 1rem;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 18px;
+    border-radius: 7px;
+    width: 150px;
+    height: 40px;
+    font-weight: bold;
+    border: 4px double #ffffff;
+    transition: 0.3s;
+    background-color: var(--btn-color);
+}
+  
+.nav-btn:hover {
+    background-color: var(--btn-color-hover);
+}
+
+.a-link{
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.hr{
+    margin: 1rem 3rem;
+    color: #b39ddb;
+}
+
+.slider-img{
+    width: 600px;
+    height: 400px;
+}
+
+.about-section{
+    background-color: pink;
+}
