@@ -9,6 +9,9 @@ class Movies extends Component {
         this.state = {
             movies : [],
             isErr : false,
+            genreArray : [],
+            searchValue: "",
+            temp:[],
         };
     }
 
@@ -18,36 +21,55 @@ class Movies extends Component {
             .get(url)
             .then((response) =>{
                  this.setState({ movies: response.data})
-                 console.log(response.data);
             });
-        // this.makeGenreArray(this.state.movies)
-
+    
     }
 
-    makeGenreArray = (movies)=>{
-        let genreArray = [];
-        let genreStr = '';
-        movies.map((movie) => {(                   
-            //  genreStr +=  movie.Genre ;
-            console.log(movie.Title+ "hi")
-            // return genr
-        )});
-        // console.log(genreStr);
-        // genreArray = genreStr.split(',');
-        // let uniqueArray = [...new Set(genreArray)];
-        //  console.log(uniqueArray);
-        // console.log(genreArray);
+    searchHandler = (event)=>{
+        this.setState({searchValue: event.target.value})
+
+        let searchedMovies = [];
+
+        this.state.movies.filter((movie)=>{
+            let title = movie.Title.toUpperCase();
+            let value = event.target.value.toUpperCase();
+            if (title.includes(value)){
+                searchedMovies.push(movie)
+            }
+         })
+        console.log(searchedMovies);
+        this.setState({temp: searchedMovies})
+        
+
+        // if(this.state.searchValue ===''){
+        //         getSnapshotBeforeUpdate(prevProps, prevState){
+        //         // this.setState({movies: prevState})
+        //         }
+        //     }
+        
     }
+
+    // getSnapshotBeforeUpdate(prevProps, prevState){
+    //     console.log('prev movie :');
+    //     console.log(prevState);
+    //     // if(this.state.searchValue ===''){
+    //     // this.setState({movies: prevState})
+    //     // }
+    // }
+    // componentDidUpdate(){
+    //     console.log('now movie :');
+    //     console.log(this.state.movies);
+    //     return null;
+    // }
     
     componentDidMount() {
         this.getMovies();
-
     }
 
    
 
     render() { 
-        const { movies, err} = this.state;
+        const { movies, err, searchValue, temp} = this.state;
         let genreStr = '';
         let genreArray = [];
         movies.map((movie) => {(                   
@@ -55,39 +77,47 @@ class Movies extends Component {
         )});
         genreArray = genreStr.split(',');
         let uniqueArray = [...new Set(genreArray)]; // ارایه ایی یونیک از ژانر ها
+        // this.setState({ genreArray: uniqueArray});
         return (
             <>
              <div className={style['Movies-section']}>
                 <div className={style['left-box']}>
-                    {
 
-                        err 
-                            ? <div className="not-found">Error !!</div>
-                            : movies.map(movie => (
-                                <CardMovie 
-                                    id={movie.id} 
-                                    poster={movie.Poster}
-                                    title={movie.Title}
-                                    director= {movie.Director}
-                                    year= {movie.Year}
-                                    genre= {movie.Genre}
-                                ></CardMovie>
-                            ))     
+                    {
+                        searchValue ? temp.map(movie => (
+                                    <CardMovie 
+                                        id={movie.id} 
+                                        poster={movie.Poster}
+                                        title={movie.Title}
+                                        director= {movie.Director}
+                                        year= {movie.Year}
+                                        genre= {movie.Genre}
+                                    ></CardMovie>
+                            )) 
+                        :   movies.map(movie => (
+                                    <CardMovie 
+                                        id={movie.id} 
+                                        poster={movie.Poster}
+                                        title={movie.Title}
+                                        director= {movie.Director}
+                                        year= {movie.Year}
+                                        genre= {movie.Genre}
+                                    ></CardMovie>
+                            )) 
                     }
                 </div>
                 <div className={style['right-box']}>
                     <div className={style['search-box']}>
-                        <input type="search" name="" id="" placeholder='search by movie title' />
+                        <input type="search" name="" id="searchnput" value={searchValue} onChange={this.searchHandler} placeholder='search by movie title' />
                     </div>
                     <div className={style['genre-box']}>
-                        {/* <button className={style['genre-btn']}>btn test</button> */}
                         {
-                               uniqueArray.map(genre =>(
-                                <button className={style['genre-btn']}> {genre} </button>
-                               ))
+                            uniqueArray.map(genre =>(
+                             <button className={style['genre-btn']}> {genre} </button>
+                            ))
                         }
                     </div>
-                </div>
+                </div>s
              </div>
             </>
         );
