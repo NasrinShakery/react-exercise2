@@ -59,23 +59,35 @@ class Movies extends Component {
     }
 
     genreBtnHandler = (event)=>{
-        this.setState({isGenreBtnClicked: true})
+        this.setState({isGenreBtnClicked: true});
+
         let userGenreArray = this.state.userGenre;
         userGenreArray.push(event.target.value);
-        // console.log(event.target);
-        // console.log(event.target.dataset); //DOMStringMap { isclicked → "false" }
-        // console.log(event.target.getAttribute('data-isclicked')); // false or true
-        let myGenreArray = this.state.genreArray
+
+        let myGenreArray = this.state.genreArray;
         console.log(myGenreArray);
         for(let i = 0; i < myGenreArray.length;i++){
             if(myGenreArray[i][0] === event.target.value){
 
                 myGenreArray[i][1] = !myGenreArray[i][1];
-                    break;
+                break;
             }
         }
         this.setState({genreArray : myGenreArray})
         console.log(this.state.genreArray);
+
+        //-------------------------------------
+        // if Btn is clicked Show That Card 
+        // if Btn is not clicked Show All cards
+        for(let i = 0; i < this.state.genreArray.length;i++){
+            if(this.state.genreArray[i][1] ){
+                this.setState({isGenreBtnClicked: true});
+                break;
+            }else{
+                this.setState({isGenreBtnClicked: false});
+            }
+        }
+        //----------------------------------------
 
 
         // console.log(userGenreArray); //Array [ " History", " Action", " Action" ]
@@ -116,6 +128,7 @@ class Movies extends Component {
                 <div className={style['left-box']}>
 
                     {
+                        // temp
                         searchValue || isGenreBtnClicked 
                             ? temp.map(movie => (
                                 // movie.genre != "" &&
