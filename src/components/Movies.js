@@ -12,6 +12,8 @@ class Movies extends Component {
             genreArray : [],
             searchValue: "",
             temp:[],
+            userGenre:[],
+            isGenreBtnClicked: false, 
         };
     }
 
@@ -20,9 +22,17 @@ class Movies extends Component {
         axios
             .get(url)
             .then((response) =>{
-                 this.setState({ movies: response.data})
-            });
-    
+                this.setState({ movies: response.data})
+                let genreStr = '';
+                let genreArray = [];
+                response.data.map((movie) => {(                   
+                    genreStr += movie.Genre
+                )});
+                genreArray = genreStr.split(',');
+                let uniqueArray = [...new Set(genreArray)];
+                this.setState({ genreArray: uniqueArray});
+           });
+            
     }
 
     searchHandler = (event)=>{
@@ -49,18 +59,33 @@ class Movies extends Component {
         
     }
 
-    // getSnapshotBeforeUpdate(prevProps, prevState){
-    //     console.log('prev movie :');
-    //     console.log(prevState);
-    //     // if(this.state.searchValue ===''){
-    //     // this.setState({movies: prevState})
-    //     // }
-    // }
-    // componentDidUpdate(){
-    //     console.log('now movie :');
-    //     console.log(this.state.movies);
-    //     return null;
-    // }
+    genreBtnHandler = (event)=>{
+        this.setState({isGenreBtnClicked: true})
+        let userGenreArray = this.state.userGenre;
+        userGenreArray.push(event.target.value);
+        // console.log(userGenreArray); //Array [ " History", " Action", " Action" ]
+        let uniqueUserGenreArray = [...new Set(userGenreArray)];
+        // console.log(uniqueUserGenreArray); //Array [ " History", " Action" ]
+            
+        let movieByUserGenre= this.state.movies.filter((movie)=>{
+
+            let movieGenreArray = movie.Genre.split(',');
+
+            for( let i=0; i< uniqueUserGenreArray.length; i++){
+
+                let thisGenre = uniqueUserGenreArray[i];
+
+                if (movieGenreArray.includes(thisGenre)){
+                    return movie ;
+                }
+            }
+        })
+        console.log(movieByUserGenre);
+        
+        this.setState({temp : movieByUserGenre})
+        console.log(this.state.temp);
+
+    }
     
     componentDidMount() {
         this.getMovies();
@@ -69,22 +94,15 @@ class Movies extends Component {
    
 
     render() { 
-        const { movies, err, searchValue, temp} = this.state;
-        let genreStr = '';
-        let genreArray = [];
-        movies.map((movie) => {(                   
-            genreStr += movie.Genre
-        )});
-        genreArray = genreStr.split(',');
-        let uniqueArray = [...new Set(genreArray)]; // ارایه ایی یونیک از ژانر ها
-        // this.setState({ genreArray: uniqueArray});
+        const { movies, err, searchValue, temp, genreArray, isGenreBtnClicked} = this.state;
         return (
             <>
              <div className={style['Movies-section']}>
                 <div className={style['left-box']}>
 
                     {
-                        searchValue ? temp.map(movie => (
+                        searchValue || isGenreBtnClicked
+                            ? temp.map(movie => (
                                     <CardMovie 
                                         id={movie.id} 
                                         poster={movie.Poster}
@@ -94,7 +112,7 @@ class Movies extends Component {
                                         genre= {movie.Genre}
                                     ></CardMovie>
                             )) 
-                        :   movies.map(movie => (
+                            :   movies.map(movie => (
                                     <CardMovie 
                                         id={movie.id} 
                                         poster={movie.Poster}
@@ -112,8 +130,8 @@ class Movies extends Component {
                     </div>
                     <div className={style['genre-box']}>
                         {
-                            uniqueArray.map(genre =>(
-                             <button className={style['genre-btn']}> {genre} </button>
+                            genreArray.map(genre =>(
+                             <button className={style['genre-btn']} onClick={this.genreBtnHandler} value={genre}> {genre} </button>
                             ))
                         }
                     </div>
