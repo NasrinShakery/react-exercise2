@@ -23,12 +23,17 @@ class Movies extends Component {
             .get(url)
             .then((response) =>{
                 this.setState({ movies: response.data})
+
                 let genreStr = '';
                 let genreArray = [];
-                response.data.map((movie) => {(                   
-                    genreStr += movie.Genre
+                
+                response.data.map((movie) => {(  
+
+                    genreStr += movie.Genre+', '
+
                 )});
-                genreArray = genreStr.split(',');
+
+                genreArray = genreStr.split(/, */);
                 let uniqueArray = [...new Set(genreArray)];
                 this.setState({ genreArray: uniqueArray.map(item => [item, false])});
                 
@@ -59,8 +64,7 @@ class Movies extends Component {
         userGenreArray.push(event.target.value);
         // console.log(event.target);
         // console.log(event.target.dataset); //DOMStringMap { isclicked → "false" }
-        // console.log(event.target.getAttribute('data-isClicked')); // false or true
-        
+        // console.log(event.target.getAttribute('data-isclicked')); // false or true
         let myGenreArray = this.state.genreArray
         console.log(myGenreArray);
         for(let i = 0; i < myGenreArray.length;i++){
@@ -80,7 +84,7 @@ class Movies extends Component {
             
         let movieByUserGenre= this.state.movies.filter((movie)=>{
 
-            let movieGenreArray = movie.Genre.split(',');
+            let movieGenreArray = movie.Genre.split(/, */);
 
             for( let i=0; i< uniqueUserGenreArray.length; i++){
 
@@ -95,7 +99,6 @@ class Movies extends Component {
         
         this.setState({temp : movieByUserGenre})
         console.log(this.state.temp);
-
     }
     
     componentDidMount() {
@@ -113,8 +116,9 @@ class Movies extends Component {
                 <div className={style['left-box']}>
 
                     {
-                        searchValue || isGenreBtnClicked
+                        searchValue || isGenreBtnClicked 
                             ? temp.map(movie => (
+                                // movie.genre != "" &&
                                     <CardMovie 
                                         id={movie.id} 
                                         poster={movie.Poster}
@@ -143,11 +147,14 @@ class Movies extends Component {
                     <div className={style['genre-box']}>
                         {
                             genreArray.map(genre => (
+                                genre[0] != "" &&
                                 genre[1]
                                     ?
-                                        <button className={style['genre-btn-green']} onClick={this.genreBtnHandler} data-isClicked={genre[1]} value={genre[0]}> {genre} </button>
+                                        <button className={style['genre-btn-green']} onClick={this.genreBtnHandler} data-isclicked={genre[1]} value={genre[0]}> {genre} </button>
                                     :
-                                        <button className={style['genre-btn']} onClick={this.genreBtnHandler} data-isClicked={genre[1]} value={genre[0]}> {genre} </button>
+                                         genre[0] != "" &&
+
+                                        <button className={style['genre-btn']} onClick={this.genreBtnHandler} data-isclicked={genre[1]} value={genre[0]}> {genre} </button>
 
 
                             ))
