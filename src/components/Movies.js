@@ -59,48 +59,47 @@ class Movies extends Component {
     }
 
     genreBtnHandler = (event)=>{
-        this.setState({isGenreBtnClicked: true});
 
-        let userGenreArray = this.state.userGenre;
-        userGenreArray.push(event.target.value);
+        let userGenreArray = this.state.userGenre; // ژانرهای انتخابی قبلی کاربر
 
-        let myGenreArray = this.state.genreArray;
-        console.log(myGenreArray);
-        for(let i = 0; i < myGenreArray.length;i++){
-            if(myGenreArray[i][0] === event.target.value){
+        let myGenreArray = this.state.genreArray; // کل ژانرهای موجود
+        
+        for(let i = 0; i < myGenreArray.length;i++){  //  روی آرایه ی کل ژانرها حرکت کن
+            if(myGenreArray[i][0] === event.target.value){  //  اگر نام ژانر با باتنی که کلیک شده برابر بود
+                // Do these ...
+                myGenreArray[i][1] = !myGenreArray[i][1]; // همان ژانر را true or false  کن
+                if(myGenreArray[i][1]=== true){
+                    // this is a selected Genre
+                    userGenreArray.push(event.target.value);
+                    this.setState({isGenreBtnClicked: true});
 
-                myGenreArray[i][1] = !myGenreArray[i][1];
+                }else if(myGenreArray[i][1]=== false){
+                    // this is deselected Genre
+                    let index =userGenreArray.indexOf(event.target.value);
+
+                    if (index !== -1) {
+                        userGenreArray.splice(index, 1);
+                        // console.log(myGenreArray[i][0] +"حذف شد");
+
+                        if(userGenreArray.length===0){
+                            // console.log("خالی شد");
+                            this.setState({isGenreBtnClicked: false});
+                        }
+                    }
+                }else 
                 break;
             }
         }
-        this.setState({genreArray : myGenreArray})
-        console.log(this.state.genreArray);
-
-        //-------------------------------------
-        // if Btn is clicked Show That Card 
-        // if Btn is not clicked Show All cards
-        for(let i = 0; i < this.state.genreArray.length;i++){
-            if(this.state.genreArray[i][1] ){
-                this.setState({isGenreBtnClicked: true});
-                break;
-            }else{
-                this.setState({isGenreBtnClicked: false});
-            }
-        }
-        //----------------------------------------
-
-
-        // console.log(userGenreArray); //Array [ " History", " Action", " Action" ]
-        let uniqueUserGenreArray = [...new Set(userGenreArray)];
-        // console.log(uniqueUserGenreArray); //Array [ " History", " Action" ]
+        this.setState({usergenre : userGenreArray})
+        console.log(this.state.userGenre);
             
         let movieByUserGenre= this.state.movies.filter((movie)=>{
 
             let movieGenreArray = movie.Genre.split(/, */);
 
-            for( let i=0; i< uniqueUserGenreArray.length; i++){
+            for( let i=0; i< this.state.userGenre.length; i++){
 
-                let thisGenre = uniqueUserGenreArray[i];
+                let thisGenre = this.state.userGenre[i];
 
                 if (movieGenreArray.includes(thisGenre)){
                     return movie ;
@@ -108,7 +107,6 @@ class Movies extends Component {
             }
         })
         console.log(movieByUserGenre);
-        
         this.setState({temp : movieByUserGenre})
         console.log(this.state.temp);
     }
@@ -117,8 +115,6 @@ class Movies extends Component {
         this.getMovies();
     }
 
-   
-
     render() { 
         const { movies, err, searchValue, temp, genreArray, isGenreBtnClicked} = this.state;
         console.log(genreArray);
@@ -126,12 +122,9 @@ class Movies extends Component {
             <>
              <div className={style['Movies-section']}>
                 <div className={style['left-box']}>
-
                     {
-                        // temp
                         searchValue || isGenreBtnClicked 
                             ? temp.map(movie => (
-                                // movie.genre != "" &&
                                     <CardMovie 
                                         id={movie.id} 
                                         poster={movie.Poster}
@@ -160,16 +153,13 @@ class Movies extends Component {
                     <div className={style['genre-box']}>
                         {
                             genreArray.map(genre => (
-                                genre[0] != "" &&
-                                genre[1]
+                                genre[0] != "" &&  genre[1]
                                     ?
                                         <button className={style['genre-btn-green']} onClick={this.genreBtnHandler} data-isclicked={genre[1]} value={genre[0]}> {genre} </button>
                                     :
                                          genre[0] != "" &&
 
                                         <button className={style['genre-btn']} onClick={this.genreBtnHandler} data-isclicked={genre[1]} value={genre[0]}> {genre} </button>
-
-
                             ))
                         }
                     </div>
