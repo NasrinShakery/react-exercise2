@@ -30,7 +30,8 @@ class Movies extends Component {
                 )});
                 genreArray = genreStr.split(',');
                 let uniqueArray = [...new Set(genreArray)];
-                this.setState({ genreArray: uniqueArray});
+                this.setState({ genreArray: uniqueArray.map(item => [item, false])});
+                
            });
             
     }
@@ -50,19 +51,29 @@ class Movies extends Component {
         console.log(searchedMovies);
         this.setState({temp: searchedMovies})
         
-
-        // if(this.state.searchValue ===''){
-        //         getSnapshotBeforeUpdate(prevProps, prevState){
-        //         // this.setState({movies: prevState})
-        //         }
-        //     }
-        
     }
 
     genreBtnHandler = (event)=>{
         this.setState({isGenreBtnClicked: true})
         let userGenreArray = this.state.userGenre;
         userGenreArray.push(event.target.value);
+        // console.log(event.target);
+        // console.log(event.target.dataset); //DOMStringMap { isclicked → "false" }
+        // console.log(event.target.getAttribute('data-isClicked')); // false or true
+        
+        let myGenreArray = this.state.genreArray
+        console.log(myGenreArray);
+        for(let i = 0; i < myGenreArray.length;i++){
+            if(myGenreArray[i][0] === event.target.value){
+
+                myGenreArray[i][1] = !myGenreArray[i][1];
+                    break;
+            }
+        }
+        this.setState({genreArray : myGenreArray})
+        console.log(this.state.genreArray);
+
+
         // console.log(userGenreArray); //Array [ " History", " Action", " Action" ]
         let uniqueUserGenreArray = [...new Set(userGenreArray)];
         // console.log(uniqueUserGenreArray); //Array [ " History", " Action" ]
@@ -95,6 +106,7 @@ class Movies extends Component {
 
     render() { 
         const { movies, err, searchValue, temp, genreArray, isGenreBtnClicked} = this.state;
+        console.log(genreArray);
         return (
             <>
              <div className={style['Movies-section']}>
@@ -130,12 +142,18 @@ class Movies extends Component {
                     </div>
                     <div className={style['genre-box']}>
                         {
-                            genreArray.map(genre =>(
-                             <button className={style['genre-btn']} onClick={this.genreBtnHandler} value={genre}> {genre} </button>
+                            genreArray.map(genre => (
+                                genre[1]
+                                    ?
+                                        <button className={style['genre-btn-green']} onClick={this.genreBtnHandler} data-isClicked={genre[1]} value={genre[0]}> {genre} </button>
+                                    :
+                                        <button className={style['genre-btn']} onClick={this.genreBtnHandler} data-isClicked={genre[1]} value={genre[0]}> {genre} </button>
+
+
                             ))
                         }
                     </div>
-                </div>s
+                </div>
              </div>
             </>
         );

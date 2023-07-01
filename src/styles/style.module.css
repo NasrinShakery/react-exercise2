@@ -134,6 +134,11 @@
     height: 2.2rem;
     font-size: 1rem;
 }
+.right-box .genre-box .genre-btn-green{
+    height: 2.2rem;
+    font-size: 1rem;
+    background-color: green;
+}
 
 
 
